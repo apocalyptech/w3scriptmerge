@@ -108,7 +108,8 @@ pile up could create an unwieldy mess.
 The merge conflicts you see in the file will be very familiar to anyone
 used to working with commandline file diffs, or version control systems
 like git/svn/whatever where merge conflicts can pop up.  For instance, my
-own conflict mentioned above us due to Natural Cat Vision and FOV Tweak
+own conflict mentioned above us due to [Natural Cat Vision](https://www.nexusmods.com/witcher3/mods/4737)
+and [FOV Tweak](https://www.nexusmods.com/witcher3/mods/2732)
 adding a bit to the same spot in the same file, and looks like this
 while manually resolving:
 
