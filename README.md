@@ -27,7 +27,7 @@ quickly grows tiresome even for a handful of mods.)
 So, that's what this, and the "official" [Script Merger](https://www.nexusmods.com/witcher3/mods/484)
 does.  That main merger is a GUI app which is quite featureful, and
 is probably what most people want, but running Windows game utils
-under Proton/Wine, when on Linux, is often a bit of a hassle, and I'm
+under Proton/Wine, when on Linux, is often a bit of a hassle.  I'm
 personally happier in the commandline anyway, so I went ahead and
 wrote this CLI version.
 
@@ -72,8 +72,8 @@ The full output from the `-h`/`--help` options is as follows:
 
 ### Witcher 3 Base Dir
 
-This script needs to know where to find the default/stock Witcher 3 scripts (or
-at least, those updated via the [Community Patch](https://www.nexusmods.com/witcher3/mods/3652)),
+This script needs to know where to find the default/stock Witcher 3 scripts
+(possibly updated with the [Community Patch](https://www.nexusmods.com/witcher3/mods/3652)),
 both for merging and for showing diffs.  If you run this script from inside
 Witcher 3's main `mods` directory, it will detect the script location properly.
 Alternatively, you can specify the base directory with the `-w`/`--w3dir`
