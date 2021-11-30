@@ -105,6 +105,32 @@ they will be reported at the end of the output.  Note that if three or more
 mods create conflicts in the same script file, letting the merge problems
 pile up could create an unwieldy mess.
 
+The merge conflicts you see in the file will be very familiar to anyone
+used to working with commandline file diffs, or version control systems
+like git/svn/whatever where merge conflicts can pop up.  For instance, my
+own conflict mentioned above us due to Natural Cat Vision and FOV Tweak
+adding a bit to the same spot in the same file, and looks like this
+while manually resolving:
+
+```diff
+<<<<<<< /tmp/tmpf6x6svik/mod0000_apoc_merged/scripts/game/player/r4Player.ws
+        //++modNCV
+        NCV = new CNCV in this;
+        NCV.Init();
+        AddTimer('CheckNCVLoop', 1.0, true);
+        //--modNCV
+
+||||||| /tmp/tmpf6x6svik/_basegame_/scripts/game/player/r4Player.ws
+
+=======
+        //modFOVTweak begin
+        ModFOVTweakUpdateFOV();
+        //modFOVTweak end
+
+
+>>>>>>> /tmp/tmpf6x6svik/modFOVTweak/scripts/game/player/r4Player.ws
+```
+
 Regardless, the script outputs the complete merged set of scripts into
 the new mod directory `mod0000_apoc_merged`.  This will include all scripts
 from all mods found in the dir, whether or not they actually required
@@ -132,18 +158,20 @@ The script can also be used to show the differences between the "stock"
 Witcher 3 script files and the versions found in any mod directory.  To
 do that, use the `-d`/`--diff` option, and specify a mod directory:
 
-	$ w3scriptmerge.py -d modGetFullXPFromQuestsNoMatterTheLevelCommunity/
-	--- /tmp/tmpt88qgzjt/_basegame_/scripts/game/r4Game.ws  2021-11-29 21:15:29.807520915 -0600
-	+++ /tmp/tmpt88qgzjt/modGetFullXPFromQuestsNoMatterTheLevelCommunity/scripts/game/r4Game.ws     2021-11-29 21:15:29.807520915 -0600
-	@@ -896,7 +896,7 @@
-													}
-													else
-													{
-	-                                                       lvlDiff = rewrd.level - thePlayer.GetLevel();
-	+                                                       lvlDiff = 0;
-	 
-	 
-															if(FactsQuerySum("NewGamePlus") > 0)
+```patch
+$ w3scriptmerge.py -d modGetFullXPFromQuestsNoMatterTheLevelCommunity/
+--- /tmp/tmpt88qgzjt/_basegame_/scripts/game/r4Game.ws  2021-11-29 21:15:29.807520915 -0600
++++ /tmp/tmpt88qgzjt/modGetFullXPFromQuestsNoMatterTheLevelCommunity/scripts/game/r4Game.ws     2021-11-29 21:15:29.807520915 -0600
+@@ -896,7 +896,7 @@
+                }
+                else
+                {
+-                       lvlDiff = rewrd.level - thePlayer.GetLevel();
++                       lvlDiff = 0;
+
+
+                        if(FactsQuerySum("NewGamePlus") > 0)
+```
 
 By default, this mode calls out to the command `diff -u --color=always`, but you
 can specify an alternate diff command using the `--diff-command` argument.
