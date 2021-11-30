@@ -112,7 +112,7 @@ own conflict mentioned above us due to Natural Cat Vision and FOV Tweak
 adding a bit to the same spot in the same file, and looks like this
 while manually resolving:
 
-```diff
+```
 <<<<<<< /tmp/tmpf6x6svik/mod0000_apoc_merged/scripts/game/player/r4Player.ws
         //++modNCV
         NCV = new CNCV in this;
@@ -130,6 +130,13 @@ while manually resolving:
 
 >>>>>>> /tmp/tmpf6x6svik/modFOVTweak/scripts/game/player/r4Player.ws
 ```
+
+In that case, I want to keep both new stanzas, so I'd basically just remove
+all the failed-merge notation in there: any line that starts with `<<<<<<<`,
+`|||||||`, `=======`, or `>>>>>>>`.  See the `--merge` section of the
+[patch(1) manpage](https://man7.org/linux/man-pages/man1/patch.1.html) or
+various [git merge-conflict resolution docs](http://tedfelix.com/software/git-conflict-resolution.html)
+for some details on that format, if you're not familiar with it.
 
 Regardless, the script outputs the complete merged set of scripts into
 the new mod directory `mod0000_apoc_merged`.  This will include all scripts
@@ -208,4 +215,5 @@ Changelog
 
  - November 30, 2021
    - Initial release
+   - Tweaked failed-merge detection slightly
 

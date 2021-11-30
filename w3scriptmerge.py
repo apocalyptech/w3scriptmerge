@@ -188,7 +188,9 @@ class ModScript:
             with open(self.merged.path_cached, 'wt', encoding='utf-8') as odf:
                 odf.write(cp.stdout)
             file_data = cp.stdout
-            while '<<<<<<<' in file_data:
+            # Was originally checking for `<<<<<<<`, and was planning on expanding that,
+            # but I think mentions of our tmp directory will be a far better check
+            while self.tmpdir in file_data:
                 if editor is None:
                     break
                 else:
@@ -200,7 +202,7 @@ class ModScript:
                             file_data = df.read()
                     else:
                         break
-            if '<<<<<<<' in file_data:
+            if self.tmpdir in file_data:
                 self.merge_problems = True
 
     def copy_merged_to_live(self):
