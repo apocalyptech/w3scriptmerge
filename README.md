@@ -214,6 +214,10 @@ See [COPYING.txt](COPYING.txt) for the full text of the license.
 Changelog
 ---------
 
+ - December 10, 2021
+   - Came across a mod script encoded in UTF-8 but with a BOM mark;
+     added support for handling that properly
+
  - November 30, 2021
    - Initial release
    - Tweaked failed-merge detection slightly

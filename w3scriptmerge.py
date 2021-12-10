@@ -77,9 +77,11 @@ class ScriptFile:
             # for a BOM and assume anything without a BOM is latin1/ISO-8859.
             # Hopefully we don't run into something which starts encoding in UTF-8.
             with open(self.path_orig, 'rb') as df:
-                bom = df.read(2)
-                if bom == b"\xFF\xFE":
+                bom = df.read(3)
+                if bom[:2] == b"\xFF\xFE":
                     encoding='utf-16'
+                elif bom == b"\xEF\xBB\xBF":
+                    encoding='utf-8-sig'
                 else:
                     encoding='latin1'
             with open(self.path_orig, 'rt', encoding=encoding) as df:
