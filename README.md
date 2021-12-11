@@ -214,6 +214,10 @@ See [COPYING.txt](COPYING.txt) for the full text of the license.
 Changelog
 ---------
 
+ - December 11, 2021
+   - Add support for *both* UTF-16 BOM markers, though I've yet to come
+     across an example of the other
+
  - December 10, 2021
    - Came across a mod script encoded in UTF-8 but with a BOM mark;
      added support for handling that properly

@@ -78,7 +78,7 @@ class ScriptFile:
             # Hopefully we don't run into something which starts encoding in UTF-8.
             with open(self.path_orig, 'rb') as df:
                 bom = df.read(3)
-                if bom[:2] == b"\xFF\xFE":
+                if bom[:2] == b"\xFF\xFE" or bom[:2] == b"\xFE\xFF":
                     encoding='utf-16'
                 elif bom == b"\xEF\xBB\xBF":
                     encoding='utf-8-sig'
