@@ -217,6 +217,8 @@ Changelog
  - December 11, 2021
    - Add support for *both* UTF-16 BOM markers, though I've yet to come
      across an example of the other
+   - Added tracking of bundled files (via `blob0.bundle`, etc) to be able
+     to report on potential conflicts with those, too
 
  - December 10, 2021
    - Came across a mod script encoded in UTF-8 but with a BOM mark;

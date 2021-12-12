@@ -27,10 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import io
 import os
 import sys
 import shlex
 import shutil
+import struct
 import argparse
 import tempfile
 import subprocess
@@ -48,6 +50,38 @@ import subprocess
 #    file that's UTF-8 or something.  If I run into that, I may have to pull
 #    in chardet: https://github.com/chardet/chardet
 #
+
+class InvalidBundleException(Exception):
+    pass
+
+def get_filenames_from_bundle(filename):
+    """
+    Returns a set of the filenames found in a `blob0.bundle` file.  The loading
+    here was taken from QuickBMS's `witcher3.bms` and simplified quite a bit
+    to skip over data that we don't care about.
+    """
+
+    filenames = set()
+    with open(filename, 'rb') as df:
+        potato = df.read(8)
+        if potato != b'POTATO70':
+            raise InvalidBundleException()
+        df.seek(16)
+        data_offset = struct.unpack('<I', df.read(4))[0]
+        num_files = data_offset/320
+        if int(num_files) != num_files:
+            raise InvalidBundleException()
+        df.seek(0x20)
+        for _ in range(int(num_files)):
+            str_data = df.read(256)
+            try:
+                zero_idx = str_data.index(b"\x00")
+                str_data = str_data[:zero_idx]
+            except ValueError as e:
+                pass
+            filenames.add(str_data.decode('latin1'))
+            df.seek(64, io.SEEK_CUR)
+    return filenames
 
 class ScriptFile:
     """
@@ -218,7 +252,9 @@ class ModScript:
 class ScriptRegistry:
     """
     Registry of all scripts found in all mods.  Intended to be used as
-    a context manager using the `with `statement.
+    a context manager using the `with `statement.  Also attempts to keep track
+    of files in `blob0.bundle` files, so that we can report if there are
+    conflicts between those (though those fixes would have to be manual)
     """
 
     def __init__(self, witcher3_dir):
@@ -226,6 +262,8 @@ class ScriptRegistry:
         self._tmpdir = None
         self.tmpdirname = None
         self.scripts = {}
+        self.bundled_files = {}
+        self.bundled_files_by_mod = {}
         self.mods = set()
 
     def __enter__(self):
@@ -272,6 +310,17 @@ class ScriptRegistry:
                         self.scripts[filename_script] = ModScript(self.witcher3_dir, filename_script, self.tmpdirname)
                     if mod != ModScript.merged_key:
                         self.scripts[filename_script].import_from_mod(mod)
+                elif filename.endswith('.bundle'):
+                    filename_bundle = os.path.join(dirpath, filename)
+                    try:
+                        self.bundled_files_by_mod[mod] = get_filenames_from_bundle(filename_bundle)
+                        for filename in self.bundled_files_by_mod[mod]:
+                            if filename in self.bundled_files:
+                                self.bundled_files[filename].add(mod)
+                            else:
+                                self.bundled_files[filename] = {mod}
+                    except InvalidBundleException as e:
+                        print(f'Unable to parse bundle file: {filename_bundle}')
         self.mods.add(mod)
 
     def show_diffs(self, mod, diff_command):
@@ -283,6 +332,10 @@ class ScriptRegistry:
             mod = mod[:-1]
         if mod != ModScript.merged_key and mod not in self.mods:
             raise RuntimeError(f'Mod "{mod}" not found in registry')
+        if mod in self.bundled_files_by_mod:
+            for filename in sorted(self.bundled_files_by_mod[mod]):
+                print(f'Bundled file: {filename}')
+        sys.stdout.flush()
         for filename, script in sorted(self.scripts.items()):
             script.show_diffs(mod, diff_command)
 
@@ -312,6 +365,14 @@ class ScriptRegistry:
             len(self.mods), mod_plural,
             len(self.scripts), script_plural
             ))
+        for filename, mods in sorted(self.bundled_files.items()):
+            if len(mods) > 1:
+                problematic.append(f'{filename} (via bundle)')
+                print(' ! {}: Bundled in {} mods: {}'.format(
+                    filename,
+                    len(mods),
+                    ', '.join(sorted(mods)),
+                    ))
         if problematic:
             if len(problematic) == 1:
                 problem_plural = ''
