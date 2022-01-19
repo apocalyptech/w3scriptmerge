@@ -36,6 +36,11 @@ sure that those are available on your default `$PATH`.  (It'd be
 shocking if they aren't, if you're on Linux.)  The app itself is a
 single Python 3 script with no dependencies.
 
+This util has been tested on the set of 39 mods (w/ 60 script files)
+which I ended up using for my Witcher 3 playthrough, and works fine
+for those.  I'm sure that there are some edge cases where this might
+not do the right thing, but it should be pretty good for most use cases.
+
 Installation / Usage
 --------------------
 
@@ -195,14 +200,19 @@ vanilla mods, everything'll be put back in order.
 TODO / Known Bugs
 -----------------
 
- - This has only been tested on a very small subset of mods, and while it
-   works great for my personal mod set, I would not be surprised if there
-   are edge cases where it fails.
  - If a script in a mod uses an encoding other than UTF-16 or
    latin1/ISO-8859, the merging/processing is likely to fail.
  - Might be nice to be able to run `-m`/`--merge` from anywhere, and have
    it default to the install dir, if there aren't any mods found in the
    current dir.
+ - As-is, for merging, the script can only do a full merge of *all* mods
+   in the mod dir -- if you've got a set of already-merged files and want
+   to merge in one more mod, you'll end up having to resolve any manual
+   differences which were present in the originally-merged mods, even if the
+   new one itself doesn't introduce any new problems.  It probably wouldn't
+   be hard to add in support to just merge a single mod dir into the
+   already-merged set, but I'm basically through with Witcher 3 now, so I'm
+   unlikely to add that feature myself.
 
 License
 -------
