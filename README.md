@@ -10,6 +10,14 @@ if you're running Witcher 3 on Linux, with Proton/Wine.  If you *are*
 a CLI-friendly Linux user going the Proton/Wine route, though, maybe
 this will be to your liking.
 
+Another Disclaimer
+------------------
+
+This was written against the "original" version of Witcher 3, not the
+2026 remaster.  It's known to Not Work™ against the newer version.  I've
+got it on my list to take a look to see if this could be made to work with
+the new version, but it might be awhile before I can take a proper look!
+
 About
 -----
 
